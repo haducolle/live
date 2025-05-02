@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>限定公開ライブ待機ページ</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #standbyVideo, #youtubeFrame {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #youtubeFrame {
+      display: none;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 待機中はこれが見える -->
+  <video id="standbyVideo" autoplay loop muted playsinline>
+    <source src="offline.mp4" type="video/mp4">
+    お使いのブラウザは video タグをサポートしていません。
+  </video>
+
+  <!-- ライブ開始後に切り替わるiframe -->
+  <iframe id="youtubeFrame"
+          allow="autoplay; encrypted-media"
+          allowfullscreen>
+  </iframe>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    const LIVE_ID = 'YOUR_LIVE_VIDEO_ID'; // 限定公開のライブ動画ID
+
+    let checkInterval = null;
+    let player;
+
+    // 定期的に再チェックする関数
+    function startLiveCheckLoop() {
+      if (checkInterval) return;
+
+      checkInterval = setInterval(() => {
+        console.log("再チェック中...");
+        const test = new YT.Player(document.createElement('div'), {
+          videoId: LIVE_ID,
+          events: {
+            'onReady': () => {
+              console.log("ライブ検出！切り替えます。");
+              clearInterval(checkInterval);
+              switchToLive();
+              test.destroy();
+            },
+            'onError': () => {
+              console.log("ライブ未検出。");
+              test.destroy();
+            }
+          },
+          playerVars: { autoplay: 0 }
+        });
+      }, 30000); // 30秒おき
+    }
+
+    function switchToLive() {
+      // standby動画を非表示
+      document.getElementById('standbyVideo').style.display = 'none';
+
+      // YouTube埋め込み開始
+      const ytFrame = document.getElementById('youtubeFrame');
+      ytFrame.src = `https://www.youtube.com/embed/${LIVE_ID}?autoplay=1&playsinline=1`;
+      ytFrame.style.display = 'block';
+    }
+
+    // IFrame Player API の読み込み完了後に呼ばれる
+    function onYouTubeIframeAPIReady() {
+      console.log("YouTube Player API 読み込み完了");
+      startLiveCheckLoop();
+    }
+  </script>
+
+</body>
+</html>
