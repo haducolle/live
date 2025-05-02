@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>限定公開ライブ自動通知</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #standbyVideo {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .soundBtn {
+      position: absolute;
+      padding: 10px 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid white;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1000;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .soundBtn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      border-color: #ccc;
+    }
+
+    #soundOn {
+      top: 20px;
+      left: 20px;
+    }
+
+    #soundOff {
+      top: 20px;
+      left: 140px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 待機中の動画 -->
+  <video id="standbyVideo" autoplay loop muted playsinline>
+    <source src="waiting.mp4" type="video/mp4">
+    お使いのブラウザは video タグをサポートしていません。
+  </video>
+
+  <!-- 音声切替ボタン -->
+  <button class="soundBtn" id="soundOn" onclick="enableSound()">音声ON</button>
+  <button class="soundBtn" id="soundOff" onclick="disableSound()">音声OFF</button>
+
+  <!-- YouTube Player API読み込み -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    const LIVE_ID = '5OKXYqZzvnE'; // ← 限定公開ライブのVideo ID
+    console.log(LIVE_ID);
+    let checkInterval = null;
+    let liveStarted = false;
+
+    function onYouTubeIframeAPIReady() {
+      console.log("YouTube API読み込み完了。配信チェック開始。");
+      startLiveCheckLoop();
+    }
+
+    function startLiveCheckLoop() {
+      if (checkInterval) return;
+
+      checkInterval = setInterval(() => {
+        if (liveStarted) return;
+
+        console.log("ライブの有無をチェック中...");
+        const tempPlayer = new YT.Player(document.createElement('div'), {
+          videoId: LIVE_ID,
+          events: {
+            'onReady': () => {
+              console.log("ライブ検出！通知へ移行。");
+              clearInterval(checkInterval);
+              liveStarted = true;
+              switchToLive();
+              tempPlayer.destroy();
+            },
+            'onError': () => {
+              console.log("まだ配信は開始されていません。");
+              tempPlayer.destroy();
+            }
+          },
+          playerVars: { autoplay: 0 }
+        });
+      }, 30000); // 30秒おき
+    }
+
+    function switchToLive() {
+      // 待機動画と音声ボタンを非表示
+      document.getElementById("standbyVideo").style.display = "none";
+      document.getElementById("soundOn").style.display = "none";
+      document.getElementById("soundOff").style.display = "none";
+
+      // 新しいタブで限定公開ライブを開く
+      const url = `https://www.youtube.com/watch?v=${LIVE_ID}`;
+      window.open(url, '_blank');
+    }
+
+    function enableSound() {
+      const video = document.getElementById("standbyVideo");
+      video.muted = false;
+      video.play();
+    }
+
+    function disableSound() {
+      const video = document.getElementById("standbyVideo");
+      video.muted = true;
+      video.play();
+    }
+  </script>
+
+</body>
+</html>
