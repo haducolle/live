@@ -2,118 +2,92 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>はづコレライブ</title>
+  <title>はづコレ'25春</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #000;
+      background: black;
       height: 100%;
-      width: 100%;
+      overflow: hidden;
     }
 
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      font-family: sans-serif;
-      color: white;
-    }
-
-    #player {
-      width: 100%;
-      max-width: 1920px;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      background-color: black;
-    }
-
-    iframe, img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    h1 {
-      margin: 20px 0;
-      font-size: 2rem;
-    }
-
-    .soundBtn {
+    #standbyVideo, #youtubeFrame {
       position: absolute;
-      padding: 10px 20px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 1px solid white;
-      color: white;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 1000;
-      transition: background-color 0.3s, border-color 0.3s;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
-    .soundBtn:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-      border-color: #ccc;
+
+    #youtubeFrame {
+      display: none;
+      border: none;
     }
-    #soundOn {
-      top: 20px;
-      left: 20px;
-    }
-    #soundOff {
-      top: 20px;
-      left: 140px;
-    }
-    
   </style>
 </head>
 <body>
-  <!-- <h1>現在の配信状況</h1> -->
-  <div id="player">読み込み中...</div>
-  <button class="soundBtn" id="soundOn" onclick="enableSound()">音声ON</button>
-  <button class="soundBtn" id="soundOff" onclick="disableSound()">音声OFF</button>
+
+  <!-- 待機中はこれが見える -->
+  <video id="standbyVideo" autoplay loop muted playsinline>
+    <source src="waitinge.mp4" type="video/mp4">
+    お使いのブラウザは video タグをサポートしていません。
+  </video>
+
+  <!-- ライブ開始後に切り替わるiframe -->
+  <iframe id="youtubeFrame"
+          allow="autoplay; encrypted-media"
+          allowfullscreen>
+  </iframe>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    const API_KEY = 'AIzaSyBhj8u4YxIZSgeu0CTuwiAlZxFbIR634a0'; // 後で置換
-    const CHANNEL_ID = 'UCSWZa6rj_4WVcB5TNl5zNbg'; // 
+    const LIVE_ID = 'YOUR_LIVE_VIDEO_ID'; // 限定公開のライブ動画ID
 
-    function enableSound() {
-      const video = document.getElementById("vid");
-      video.muted = false;
-      video.play(); // 再生し直し
-    }
-    function disableSound() {
-      const video = document.getElementById("vid");
-      video.muted = true;
-      video.play(); // 再生し直し
-    }
+    let checkInterval = null;
+    let player;
 
-    async function checkLive() {
-      try {
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`);
-        const data = await res.json();
-        const container = document.getElementById('player');
+    // 定期的に再チェックする関数
+    function startLiveCheckLoop() {
+      if (checkInterval) return;
 
-        if (data.items && data.items.length > 0) {
-          const videoId = data.items[0].id.videoId;
-          container.innerHTML = `
-            <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1"
-                    frameborder="0"
-                    allowfullscreen></iframe>`;
-        } else {
-          //container.innerHTML = `<img src="offline.jpg" alt="現在配信は行われていません。">`;
-          container.innerHTML = `
-            <video id="vid" width="100%" height="100%" autoplay loop muted playsinline>
-              <source src="waiting.mp4" type="video/mp4">
-              お使いのブラウザは video タグをサポートしていません。
-          </video>`;
-        }
-      } catch (error) {
-        document.getElementById('player').innerText = 'エラーが発生しました。';
-        console.error(error);
-      }
+      checkInterval = setInterval(() => {
+        console.log("再チェック中...");
+        const test = new YT.Player(document.createElement('div'), {
+          videoId: LIVE_ID,
+          events: {
+            'onReady': () => {
+              console.log("ライブ検出！切り替えます。");
+              clearInterval(checkInterval);
+              switchToLive();
+              test.destroy();
+            },
+            'onError': () => {
+              console.log("ライブ未検出。");
+              test.destroy();
+            }
+          },
+          playerVars: { autoplay: 0 }
+        });
+      }, 30000); // 30秒おき
     }
 
-    checkLive();
+    function switchToLive() {
+      // standby動画を非表示
+      document.getElementById('standbyVideo').style.display = 'none';
+
+      // YouTube埋め込み開始
+      const ytFrame = document.getElementById('youtubeFrame');
+      ytFrame.src = `https://www.youtube.com/embed/${LIVE_ID}?autoplay=1&playsinline=1`;
+      ytFrame.style.display = 'block';
+    }
+
+    // IFrame Player API の読み込み完了後に呼ばれる
+    function onYouTubeIframeAPIReady() {
+      console.log("YouTube Player API 読み込み完了");
+      startLiveCheckLoop();
+    }
   </script>
+
 </body>
 </html>
