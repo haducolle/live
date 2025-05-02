@@ -40,13 +40,6 @@
       font-size: 2rem;
     }
   </style>
-  <script>
-    function enableSound() {
-      const video = document.getElementById("vid");
-      video.muted = false;
-      video.play(); // 再生し直し
-    }
-  </script>
 </head>
 <body>
   <!-- <h1>現在の配信状況</h1> -->
@@ -55,6 +48,12 @@
   <script>
     const API_KEY = 'AIzaSyBhj8u4YxIZSgeu0CTuwiAlZxFbIR634a0'; // 後で置換
     const CHANNEL_ID = 'UCSWZa6rj_4WVcB5TNl5zNbg'; // 
+
+    function enableSound() {
+      const video = document.getElementById("vid");
+      video.muted = false;
+      video.play(); // 再生し直し
+    }
 
     async function checkLive() {
       try {
