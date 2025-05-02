@@ -40,10 +40,8 @@
       font-size: 2rem;
     }
 
-    #soundOn {
+    .soundBtn {
       position: absolute;
-      top: 20px;
-      left: 20px;
       padding: 10px 20px;
       background-color: rgba(255, 255, 255, 0.1);
       border: 1px solid white;
@@ -54,18 +52,26 @@
       z-index: 1000;
       transition: background-color 0.3s, border-color 0.3s;
     }
-
-    #soundOn:hover {
+    .soundBtn:hover {
       background-color: rgba(255, 255, 255, 0.3);
       border-color: #ccc;
     }
+    #soundOn {
+      top: 20px;
+      left: 20px;
+    }
+    #soundOff {
+      top: 20px;
+      left: 40px;
+    }
+    
   </style>
 </head>
 <body>
   <!-- <h1>現在の配信状況</h1> -->
   <div id="player">読み込み中...</div>
-  <button id="soundOn" onclick="enableSound()">音声ON</button>
-  <button id="soundOff" onclick="disableSound()">音声OFF</button>
+  <button class="soundBtn" id="soundOn" onclick="enableSound()">音声ON</button>
+  <button class="soundBtn" id="soundOff" onclick="disableSound()">音声OFF</button>
   <script>
     const API_KEY = 'AIzaSyBhj8u4YxIZSgeu0CTuwiAlZxFbIR634a0'; // 後で置換
     const CHANNEL_ID = 'UCSWZa6rj_4WVcB5TNl5zNbg'; // 
