@@ -36,12 +36,55 @@
       height: auto;
       display: block;
     }
+
+    .qrSection {
+      display: flex;
+      justify-content: center;
+      gap: 2em;
+      margin: 2em auto;
+      flex-wrap: wrap;
+    }
+
+    .qrBlock {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .qrBlock a {
+      color: #d16a7f;
+      font-weight: bold;
+      text-decoration: none;
+      margin-bottom: 0.5em;
+    }
+
+    .qrBlock img {
+      width: 200px;
+      height: auto;
+      border: 2px solid #d16a7f;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
 
   <h1>はづコレ'25春</h1>
-  <p>はづコレ'25春の中継用限定公開リンクは、<br>ライブ開始が近くなりましたらこのページに掲載します。</p>
+
+  <div class="qrSection">
+    <div class="qrBlock">
+      <a href="https://youtube.com/live/_UrQark241g?feature=share" target="_blank">はづコレ中継を見る</a>
+      <a href="https://youtube.com/live/_UrQark241g?feature=share" target="_blank">
+        <img src="25SpringStreraming.png" alt="はづコレライブ中継QRコード">
+      </a>
+    </div>
+
+    <div class="qrBlock">
+      <a href="https://www.youtube.com/watch?v=1cE7ChJiOiY&list=PLh48KQgqBOSnZGEKRbcrMcvOD82Inn1Ok&pp=gAQB" target="_blank">ライブ部門使用曲再生リスト</a>
+      <a href="https://www.youtube.com/watch?v=1cE7ChJiOiY&list=PLh48KQgqBOSnZGEKRbcrMcvOD82Inn1Ok&pp=gAQB" target="_blank">
+        <img src="25SpringSongLIst.png" alt="使用曲リストQRコード">
+      </a>
+    </div>
+  </div>
 
   <div class="videoFrame">
     <video autoplay muted loop playsinline controls>
