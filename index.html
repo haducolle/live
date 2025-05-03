@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>はづコレ'25春</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
@@ -40,15 +41,19 @@
     .qrSection {
       display: flex;
       justify-content: center;
+      align-items: flex-start;
       gap: 2em;
       margin: 2em auto;
       flex-wrap: wrap;
+      max-width: 800px;
     }
 
     .qrBlock {
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin-bottom: 1.5em;
+      flex: 1 1 240px; /* 幅が狭い時は縦並び */
     }
 
     .qrBlock a {
@@ -56,13 +61,31 @@
       font-weight: bold;
       text-decoration: none;
       margin-bottom: 0.5em;
+      font-size: 1rem;
     }
 
     .qrBlock img {
-      width: 200px;
+      width: 100%;
+      max-width: 220px;
       height: auto;
       border: 2px solid #d16a7f;
       border-radius: 8px;
+    }
+
+    @media screen and (max-width: 600px) {
+      .qrSection {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .qrBlock {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .qrBlock a {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
