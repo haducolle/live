@@ -53,7 +53,7 @@
       flex-direction: column;
       align-items: center;
       margin-bottom: 1.5em;
-      flex: 1 1 240px; /* 幅が狭い時は縦並び */
+      flex: 1 1 240px;
     }
 
     .qrBlock a {
@@ -72,6 +72,15 @@
       border-radius: 8px;
     }
 
+    .qrNotice {
+      flex-basis: 100%;
+      text-align: center;
+      margin-top: 1em;
+      color: #555;
+      font-size: 0.95rem;
+      order: 3;
+    }
+
     @media screen and (max-width: 600px) {
       .qrSection {
         flex-direction: column;
@@ -85,6 +94,10 @@
 
       .qrBlock a {
         font-size: 1.1rem;
+      }
+
+      .qrNotice {
+        order: 1; /* スマホでは1つ目QRコードの下に表示 */
       }
     }
   </style>
@@ -106,6 +119,13 @@
       <a href="https://www.youtube.com/watch?v=1cE7ChJiOiY&list=PLh48KQgqBOSnZGEKRbcrMcvOD82Inn1Ok&pp=gAQB" target="_blank">
         <img src="25SpringSongLIst.png" alt="使用曲リストQRコード">
       </a>
+    </div>
+
+    <div class="qrNotice">
+      <p>
+        ※イベント開始は<strong>21:00から</strong>です。<br>
+        中継はその少し前から始まり、それまでは「<strong>オフライン</strong>」と表示されます。
+      </p>
     </div>
   </div>
 
